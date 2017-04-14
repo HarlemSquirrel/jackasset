@@ -5,6 +5,7 @@ require 'colorize'
 require 'csv'
 require 'net/http'
 require 'openssl'
+require 'resolv-replace'
 
 require_relative '../lib/jackasset'
 require_relative '../lib/jackasset/assets_checker'
