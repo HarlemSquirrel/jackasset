@@ -4,19 +4,42 @@ module Jackasset
   # The main class
   class Cli
     BAD_CALL_MSG = 'Usage: jackasset [-p PORT] path/to/html_files'
-
-    def call(host: 'http://localhost:8080', source_dir:)
-      Jackasset::AssetsChecker.call host: host, source_dir: source_dir
-    end
+    PORT_RANGE = 1..65535
 
     def self.call
-      if ARGV.length == 1
-        new.call source_dir: ARGV.first
-      elsif ARGV.length == 3 && ARGV.first == '-p' && ARGV[1].match?(/\A\d{4}\z/)
-        new.call host: "http://localhost:#{ARGV[1]}", source_dir: ARGV.last
+      new.call
+    end
+
+    def call
+      if valid_args_without_port?
+        check_assets source_dir: ARGV.first
+      elsif valid_args_with_port?
+        check_assets host: "http://localhost:#{ARGV[1]}", source_dir: ARGV.last
       else
         puts BAD_CALL_MSG.red
       end
+    end
+
+    private
+
+    def check_assets(args)
+      Jackasset::AssetsChecker.call args
+    end
+
+    def valid_args_with_port?
+      ARGV.length == 3 && valid_port_arg? && valid_dir_arg?
+    end
+
+    def valid_args_without_port?
+      ARGV.length == 1 && valid_dir_arg?
+    end
+
+    def valid_dir_arg?
+      File.directory? ARGV.last
+    end
+
+    def valid_port_arg?
+      ARGV.first == '-p' && PORT_RANGE.include?(ARGV[1])
     end
   end
 end
