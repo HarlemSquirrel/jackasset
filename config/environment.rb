@@ -4,6 +4,7 @@ require 'benchmark'
 require 'colorize'
 require 'csv'
 require 'net/http'
+require 'openssl'
 
 require_relative '../lib/jackasset'
 require_relative '../lib/jackasset/assets_checker'
