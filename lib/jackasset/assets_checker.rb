@@ -38,13 +38,13 @@ module Jackasset
     end
 
     def display_result(response)
-        msg = " #{response.code} #{response.message} #{response.uri.to_s}"
+        msg = " #{response.code} #{response.message} #{response.uri.to_s}\n"
         case response
         when Net::HTTPSuccess, Net::HTTPRedirection
-          puts msg.green
+          print msg.green
         else
           @num_issues += 1
-          puts msg.red
+          print msg.red
         end
       end
 
