@@ -1,0 +1,10 @@
+*.csv
+spec/examples.txt
+!spec/fixtures/expected_test_results.csv
+!spec/fixtures/test.csv
+
+*.gem
+
+Gemfile.lock
+.ruby-version
+.ruby-gemset
