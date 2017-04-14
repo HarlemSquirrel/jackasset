@@ -31,7 +31,9 @@ module Jackasset
     end
 
     def clean_url(url)
-      cleaned_url = url.gsub('src=', '').gsub('"', '').gsub(/\A\//, '').strip
+      cleaned_url = url.gsub('src=', '').gsub('"', '').strip # Remove src, quotes, and whitespace
+      cleaned_url.gsub! /\A\/\//, 'http://' # Set protocol if needed
+      cleaned_url.slice! /\A\// # Remove single leading slash
       cleaned_url.match?(/\Ahttp/) ? cleaned_url : "#{host}/#{cleaned_url}"
     end
 
