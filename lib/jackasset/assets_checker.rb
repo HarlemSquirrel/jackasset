@@ -16,9 +16,9 @@ module Jackasset
 
     def call
       img_urls
-      threads = img_urls.each_with_object([]) do |url, threads|
+      threads = img_urls.each_with_object([]) do |url, thread_list|
         next unless url.match?(/\Ahttp/)
-        threads << Thread.new { check_url url }
+        thread_list << Thread.new { check_url url }
       end
       threads.each(&:join)
       puts "Finished checking #{img_urls.count} URLs and found #{num_issues} issues"
@@ -31,22 +31,22 @@ module Jackasset
     end
 
     def clean_url(url)
-      cleaned_url = url.gsub('src=', '').gsub('"', '').strip # Remove src, quotes, and whitespace
-      cleaned_url.gsub! /\A\/\//, 'http://' # Set protocol if needed
-      cleaned_url.slice! /\A\// # Remove single leading slash
+      cleaned_url = url.sub('src=', '').delete('"').strip # Remove src, quotes, and whitespace
+      cleaned_url.gsub!(/\A\/\//, 'http://') # Set protocol if needed
+      cleaned_url.slice!(/\A\//) # Remove single leading slash
       cleaned_url.match?(/\Ahttp/) ? cleaned_url : "#{host}/#{cleaned_url}"
     end
 
     def display_result(response)
-        msg = " #{response.code} #{response.message} #{response.uri.to_s}\n"
-        case response
-        when Net::HTTPSuccess, Net::HTTPRedirection
-          print msg.green
-        else
-          @num_issues += 1
-          print msg.red
-        end
+      msg = " #{response.code} #{response.message} #{response.uri}\n"
+      case response
+      when Net::HTTPSuccess, Net::HTTPRedirection
+        print msg.green
+      else
+        @num_issues += 1
+        print msg.red
       end
+    end
 
     def img_urls
       @img_urls ||= Dir["#{source_dir}/**/*.html"].each_with_object([]) do |path, urls|
