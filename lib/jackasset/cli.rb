@@ -39,7 +39,7 @@ module Jackasset
     end
 
     def valid_port_arg?
-      ARGV.first == '-p' && PORT_RANGE.include?(ARGV[1])
+      ARGV.first == '-p' && PORT_RANGE.include?(ARGV[1].to_i)
     end
   end
 end
